@@ -1,8 +1,15 @@
 # Sip
 
 Sip is a simple hydration tracker built with Kotlin and Jetpack Compose.
-
 Track daily water intake, view history, and receive hydration reminders throughout the day.
+
+<p align="center">
+  <img src="./screenshot/Screenshot_20260607_222240.png" width="200">
+  &nbsp;&nbsp;
+   <img src="./screenshot/Screenshot_20260607_222300.png" width="200">
+  &nbsp;&nbsp;
+ <img src="./screenshot/Screenshot_20260607_222251.png" width="200">
+</p>
 
 ## Features
 
@@ -11,9 +18,8 @@ Track daily water intake, view history, and receive hydration reminders througho
 - Daily hydration goal
 - Reminder notifications
 - Start and end reminder times
-- History with swipe-to-delete
+- History
 - Material 3 UI
-- Dark mode support
 
 ## Built With
 
@@ -24,24 +30,6 @@ Track daily water intake, view history, and receive hydration reminders througho
 - AlarmManager
 - Material 3
 
-## Screens
-
-- Home
-- History
-- Settings
-
-## Requirements
-
-- Android 10.0+
-- Android Studio Hedgehog or newer
-
-## Running
-
-1. Clone the repository
-2. Open in Android Studio
-3. Sync Gradle
-4. Run on device or emulator
-
 ## Permissions
 
 Sip may request:
@@ -49,5 +37,4 @@ Sip may request:
 - Notification permission
 - Exact alarm permission
 - Battery optimization exemption
-
-These are used for reliable reminder notifications.
+  These are used for reliable reminder notifications.
