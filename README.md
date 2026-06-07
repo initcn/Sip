@@ -11,6 +11,8 @@ Track daily water intake, view history, and receive hydration reminders througho
  <img src="./screenshot/Screenshot_20260607_222251.png" width="200">
 </p>
 
+[Download](https://github.com/initcn/Sip/releases/latest)
+
 ## Features
 
 - Quick water logging
