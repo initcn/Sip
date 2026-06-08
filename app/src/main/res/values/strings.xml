@@ -1,14 +1,11 @@
 <resources>
 
-    <!-- APP -->
     <string name="app_name">Sip</string>
 
-    <!-- NAVIGATION -->
     <string name="home">Home</string>
     <string name="history">History</string>
     <string name="settings">Settings</string>
 
-    <!-- HOME -->
     <string name="today">Today</string>
     <string name="this_week">This Week</string>
     <string name="this_month">This Month</string>
@@ -19,49 +16,23 @@
     <string name="custom_amount">Custom Amount</string>
     <string name="enter_in_ml">Enter in ml</string>
 
-    <!-- COMMON -->
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="custom">Custom</string>
 
-    <!-- HISTORY -->
     <string name="delete_entry">Delete Entry?</string>
+    <string name="delete_entry_message">Are you sure you want to remove this entry?</string>
 
-    <string name="delete_entry_message">
-        Are you sure you want to remove this entry?
-    </string>
-
-    <!-- SETTINGS -->
     <string name="daily_goal">Daily Goal</string>
-
     <string name="reminders">Reminders</string>
-
-    <string name="reminder_interval">
-        Reminder Interval
-    </string>
-
-    <string name="notification_duration">
-        Notification Duration
-    </string>
-
-    <string name="custom_goal">
-        Custom goal
-    </string>
-
+    <string name="reminder_interval">Reminder Interval</string>
+    <string name="notification_duration">Notification Duration</string>
+    <string name="custom_goal">Custom goal</string>
     <string name="minutes">Minutes</string>
 
-    <!-- VALIDATION -->
-    <string name="water_validation">
-        Enter between 1 and 5000 ml
-    </string>
-
-    <string name="goal_validation">
-        Enter between 500 and 15000 ml
-    </string>
-
-    <string name="interval_validation">
-        Enter between 1 and 720 mins
-    </string>
+    <string name="water_validation">Enter between 1 and 5000 ml</string>
+    <string name="goal_validation">Enter between 500 and 15000 ml</string>
+    <string name="interval_validation">Enter between 15 and 720 mins</string>
 
 </resources>

@@ -24,277 +24,89 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.sip.data.settings.SettingsPreferences
 import com.sip.ui.SipBottomNavigation
 import com.sip.ui.SipScreen
-import com.sip.ui.history.HistoryScreen
-import com.sip.ui.home.HomeScreen
-import com.sip.ui.home.HomeViewModel
-import com.sip.ui.settings.SettingsScreen
-import com.sip.ui.settings.SettingsViewModel
-import com.sip.ui.stats.StatsScreen
-import com.sip.ui.stats.StatsViewModel
+import com.sip.ui.screens.HistoryScreen
+import com.sip.ui.screens.HomeScreen
+import com.sip.ui.screens.SettingsScreen
+import com.sip.ui.screens.StatsScreen
 import com.sip.ui.theme.SipTheme
 
 class MainActivity : ComponentActivity() {
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-
         super.onCreate(savedInstanceState)
-
         requestNotificationPermission()
 
         setContent {
-
             SipTheme {
-
                 val app = application as App
+                val sipViewModel = app.sipViewModel
 
-                /*
-                ---------------------------------------------------
-                HOME VIEWMODEL
-                ---------------------------------------------------
-                */
-
-                val homeViewModel:
-                        HomeViewModel = viewModel(
-
-                    factory =
-                        object :
-                            ViewModelProvider.Factory {
-
-                            @Suppress(
-                                "UNCHECKED_CAST"
-                            )
-
-                            override fun
-                                    <T : ViewModel>
-                                    create(
-                                modelClass:
-                                Class<T>
-                            ): T {
-
-                                return HomeViewModel(
-                                    waterDao =
-                                        app.database
-                                            .waterDao()
-                                ) as T
-                            }
-                        }
-                )
-
-                /*
-                ---------------------------------------------------
-                SETTINGS VIEWMODEL
-                ---------------------------------------------------
-                */
-
-                val settingsViewModel:
-                        SettingsViewModel =
-                    viewModel(
-
-                        factory =
-                            object :
-                                ViewModelProvider
-                                .Factory {
-
-                                @Suppress(
-                                    "UNCHECKED_CAST"
-                                )
-
-                                override fun
-                                        <T : ViewModel>
-                                        create(
-                                    modelClass:
-                                    Class<T>
-                                ): T {
-
-                                    return SettingsViewModel(
-                                        preferences =
-                                            SettingsPreferences(
-                                                this@MainActivity
-                                            )
-                                    ) as T
-                                }
-                            }
-                    )
-
-                /*
-                ---------------------------------------------------
-                STATS VIEWMODEL
-                ---------------------------------------------------
-                */
-
-                val statsViewModel:
-                        StatsViewModel =
-                    viewModel(
-
-                        factory =
-                            object :
-                                ViewModelProvider
-                                .Factory {
-
-                                @Suppress(
-                                    "UNCHECKED_CAST"
-                                )
-
-                                override fun
-                                        <T : ViewModel>
-                                        create(
-                                    modelClass:
-                                    Class<T>
-                                ): T {
-
-                                    return StatsViewModel(
-                                        waterDao =
-                                            app.database
-                                                .waterDao()
-                                    ) as T
-                                }
-                            }
-                    )
-
-                /*
-                ---------------------------------------------------
-                DAILY GOAL
-                ---------------------------------------------------
-                */
-
-                val dailyGoal by
-                settingsViewModel
-                    .dailyGoal
-                    .collectAsState()
-
-                /*
-                ---------------------------------------------------
-                NAVIGATION
-                ---------------------------------------------------
-                */
-
-                var currentScreen by remember {
-
-                    mutableStateOf(
-                        SipScreen.HOME
-                    )
-                }
-
-                /*
-                ---------------------------------------------------
-                UI
-                ---------------------------------------------------
-                */
+                val dailyGoal by sipViewModel.dailyGoal.collectAsState()
+                var currentScreen by remember { mutableStateOf(SipScreen.HOME) }
 
                 Scaffold(
-
                     bottomBar = {
-
                         SipBottomNavigation(
-                            currentScreen =
-                                currentScreen,
-
-                            onScreenSelected = {
-                                currentScreen = it
-                            }
+                            currentScreen = currentScreen,
+                            onScreenSelected = { currentScreen = it }
                         )
                     }
-
                 ) { paddingValues ->
-
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-
+                    Surface(modifier = Modifier.fillMaxSize()) {
                         when (currentScreen) {
-
                             /*
                             ---------------------------------------------------
-                            HOME
+                            HOME SCREEN
                             ---------------------------------------------------
                             */
-
                             SipScreen.HOME -> {
-
                                 HomeScreen(
-                                    paddingValues =
-                                        paddingValues,
-
-                                    viewModel =
-                                        homeViewModel,
-
-                                    dailyGoal =
-                                        dailyGoal
+                                    paddingValues = paddingValues,
+                                    viewModel = sipViewModel,
+                                    dailyGoal = dailyGoal
                                 )
                             }
 
                             /*
                             ---------------------------------------------------
-                            HISTORY
+                            HISTORY SCREEN (UNIFIED)
                             ---------------------------------------------------
                             */
-
                             SipScreen.HISTORY -> {
-
-                                val historyEntries by
-                                app.database
-                                    .waterDao()
-                                    .getAllEntries()
-                                    .collectAsState(
-                                        initial = emptyList()
-                                    )
+                                // FIXED: Collect stream metrics straight out of our single engine scope
+                                val historyEntries by sipViewModel.historyEntries.collectAsState()
 
                                 HistoryScreen(
-                                    paddingValues =
-                                        paddingValues,
-
-                                    entries =
-                                        historyEntries,
-
-                                    onDeleteEntry = {
-                                        homeViewModel
-                                            .deleteEntry(it)
-                                    }
+                                    paddingValues = paddingValues,
+                                    entries = historyEntries,
+                                    onDeleteEntry = { sipViewModel.deleteEntry(it) }
                                 )
                             }
 
                             /*
                             ---------------------------------------------------
-                            STATS
+                            STATS SCREEN
                             ---------------------------------------------------
                             */
-
                             SipScreen.STATS -> {
-
                                 StatsScreen(
-                                    paddingValues =
-                                        paddingValues,
-
-                                    viewModel =
-                                        statsViewModel
+                                    paddingValues = paddingValues,
+                                    viewModel = sipViewModel
                                 )
                             }
 
                             /*
                             ---------------------------------------------------
-                            SETTINGS
+                            SETTINGS SCREEN
                             ---------------------------------------------------
                             */
-
                             SipScreen.SETTINGS -> {
-
                                 SettingsScreen(
-                                    paddingValues =
-                                        paddingValues,
-
-                                    viewModel =
-                                        settingsViewModel
+                                    paddingValues = paddingValues,
+                                    viewModel = sipViewModel
                                 )
                             }
                         }
@@ -306,102 +118,41 @@ class MainActivity : ComponentActivity() {
 
     /*
     ---------------------------------------------------
-    NOTIFICATION PERMISSION
+    PERMISSIONS & OPTIMIZATION OVERRIDES
     ---------------------------------------------------
     */
 
     private fun requestNotificationPermission() {
-
-        if (
-            Build.VERSION.SDK_INT >=
-            Build.VERSION_CODES.TIRAMISU
-        ) {
-
-            if (
-                ContextCompat
-                    .checkSelfPermission(
-                        this,
-                        Manifest.permission
-                            .POST_NOTIFICATIONS
-                    ) !=
-                PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
-
-                ActivityCompat
-                    .requestPermissions(
-
-                        this,
-
-                        arrayOf(
-                            Manifest.permission
-                                .POST_NOTIFICATIONS
-                        ),
-
-                        100
-                    )
+                ActivityCompat.requestPermissions(
+                    this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 100
+                )
             }
         }
     }
 
-    /*
-    ---------------------------------------------------
-    EXACT ALARM PERMISSION
-    ---------------------------------------------------
-    */
-
     fun requestExactAlarmPermission() {
-
-        if (
-            Build.VERSION.SDK_INT >=
-            Build.VERSION_CODES.S
-        ) {
-
-            val alarmManager =
-                getSystemService(
-                    AlarmManager::class.java
-                )
-
-            if (
-                !alarmManager
-                    .canScheduleExactAlarms()
-            ) {
-
-                val intent = Intent(
-                    Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                )
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(AlarmManager::class.java)
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                 startActivity(intent)
             }
         }
     }
 
-    /*
-    ---------------------------------------------------
-    BATTERY OPTIMIZATION
-    ---------------------------------------------------
-    */
-
     @SuppressLint("BatteryLife")
     fun requestBatteryOptimizationDisable() {
-
-        val powerManager =
-            getSystemService(
-                PowerManager::class.java
-            )
-
-        if (
-            !powerManager
-                .isIgnoringBatteryOptimizations(
-                    packageName
-                )
-        ) {
-
+        val powerManager = getSystemService(PowerManager::class.java)
+        if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
             val intent = Intent(
                 Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-
                 "package:$packageName".toUri()
             )
-
             startActivity(intent)
         }
     }
