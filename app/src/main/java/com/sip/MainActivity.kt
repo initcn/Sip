@@ -11,6 +11,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -39,6 +40,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         requestNotificationPermission()
 
+        enableEdgeToEdge()
+
         setContent {
             SipTheme {
                 val app = application as App
@@ -57,11 +60,6 @@ class MainActivity : ComponentActivity() {
                 ) { paddingValues ->
                     Surface(modifier = Modifier.fillMaxSize()) {
                         when (currentScreen) {
-                            /*
-                            ---------------------------------------------------
-                            HOME SCREEN
-                            ---------------------------------------------------
-                            */
                             SipScreen.HOME -> {
                                 HomeScreen(
                                     paddingValues = paddingValues,
@@ -70,15 +68,8 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            /*
-                            ---------------------------------------------------
-                            HISTORY SCREEN (UNIFIED)
-                            ---------------------------------------------------
-                            */
                             SipScreen.HISTORY -> {
-                                // FIXED: Collect stream metrics straight out of our single engine scope
                                 val historyEntries by sipViewModel.historyEntries.collectAsState()
-
                                 HistoryScreen(
                                     paddingValues = paddingValues,
                                     entries = historyEntries,
@@ -86,11 +77,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            /*
-                            ---------------------------------------------------
-                            STATS SCREEN
-                            ---------------------------------------------------
-                            */
                             SipScreen.STATS -> {
                                 StatsScreen(
                                     paddingValues = paddingValues,
@@ -98,11 +84,6 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
 
-                            /*
-                            ---------------------------------------------------
-                            SETTINGS SCREEN
-                            ---------------------------------------------------
-                            */
                             SipScreen.SETTINGS -> {
                                 SettingsScreen(
                                     paddingValues = paddingValues,
@@ -115,12 +96,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    /*
-    ---------------------------------------------------
-    PERMISSIONS & OPTIMIZATION OVERRIDES
-    ---------------------------------------------------
-    */
 
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
